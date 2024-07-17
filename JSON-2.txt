@@ -1,0 +1,33 @@
+style: { width-weight; height; background-color; color; font-size; font-family; }
+
+record: { {type, value, style} , {type, value, style}, {type, value, style} }
+
+- Maximum height of a row-items will be considered as the row height
+- Same value of the adjacents will be span automatically (auto row-span) 
+
+tableJson:
+	records: 
+		{ {text, "2024-05", style}, {text, "Report", style}, {img, url, style} },
+		{ {text, "description", style}},
+		{ {text, section-1, style}, {text, sub-1, style}, {text, field-1, style}, {text, field-2, style}, {text, field-3, style}, {text, field-4, style} },
+		{ {text, section-1, style}, {text, sub-1, style}, {text, val-1, style}, {text, val-2, style}, {text, val-3, style}, {text, val-4, style}},
+		...
+		{ {text, section-1, style}, {text, sub-2, style}, {text, field-5, style}, {text, field-6, style}, {text, field-7, style} },
+		{ {text, section-1, style}, {text, sub-2, style}, {text, val-5, style}, {text, val-6, style}, {text, val-7, style}},
+		...
+		...
+		{ {text, "description-2", style} },
+		{ {text, section-2, style}, {text, field-10, style}, {text, field-11, style}, {text, field-12, style}, {text, field-13, style}, {text, field-14, style} },
+		{ {text, section-2, style}, {text, val-10, style}, {text, val-11, style}, {text, val-12, style}, {text, val-13, style}, {text, val-14, style} },
+		...
+		...
+		{ {text, "description-3", style}},
+		{ {text, field-15, style}, {text, field-16, style}, {text, field-17, style}, {text, field-18, style}, {text, field-19, style}, {text, field-20, style} },
+		{ {text, val-15, style}, {text, val-16, style}, {text, val-17, style}, {text, val-18, style}, {text, val-19, style}, {text, val-20, style} },
+		
+				
+			
+			
+	
+
+	

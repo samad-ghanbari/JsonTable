@@ -1,0 +1,86 @@
+tableJson:
+
+	- header
+		1:
+			style:{ width; height; background-color; color; font-size; font-family;  }
+			date
+			title
+			img
+
+
+		2:
+			style
+			description
+	
+	- section-1:
+		type: vertical-subsection
+		title
+		style: { width; row-height; background-color; color; font-size; font-family }
+
+		subsections:
+			1: 
+				style: {width; background-color; color; font-size; font-family}
+				title
+				fields: 
+					field-1: { column-weight; background-color; color; font-size; font-family  }
+					field-2: {}
+					field-3: {}
+					field-4: {}
+				records:
+					[ {}; {}, ... ]
+
+			2:
+				
+				style: {width; background-color; color; font-size; font-family}
+				title
+				fields: 
+					field-5: { column-weight; background-color; color; font-size; font-family  }
+					field-6: {}
+					field-7: {}
+				records:
+					[ {}; {}, ... ]
+			3:
+				style: {width; background-color; color; font-size; font-family}
+				title
+				fields: 
+					field-8: { column-weight; background-color; color; font-size; font-family  }
+					field-9: {}
+				records:
+					[ {}; {}, ... ]
+
+
+	- section-2:
+		type: vertical
+		style: {width; background-color; color; font-size; font-family}
+		title
+		fields: 
+			field-10: { column-weight; background-color; color; font-size; font-family  }
+			field-11: {}
+			field-12: {}
+			field-13: {}
+			field-14: {}
+		records:
+			[ {}; {}, ... ]	
+
+
+	- section-3:
+		type: horizontal
+		style: {width; background-color; color; font-size; font-family}
+		title
+		fields: 
+			field-15: {  column-weight; background-color; color; font-size; font-family  }
+			field-16: {}
+			field-17: {}
+			field-18: {}
+			field-19: {}
+			field-20: {}
+		records:
+			[ {}; {}, ... ]	
+		
+
+				
+			
+			
+	
+
+	
