@@ -24,6 +24,8 @@ public:
 
 
 
+
+
     QJsonArray json; // [ [ {}, {}, {}, ... ], [], [], [] ]
     QString default_background_color, default_color, default_font_family;
     int default_height, default_font_size;
