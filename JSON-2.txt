@@ -1,13 +1,16 @@
 style: { width-weight; height; background-color; color; font-size; font-family; }
+style: { width; height; background-color; color; font-size; font-family; }
 
-record: [ {type, value, style} , {type, value, style}, {type, value, style} ]
-records: [ record-1, record-2 , ... ]
+row-item: { type, value, style }		QJsonObject
+row: [ row-item-1 , row-item-2, row-item-3 ]	QJsonArray
+table: [ row-1, row-2 , ... ]			QJsonArray
 
 - Maximum height of a row-items will be considered as the row height
 - Same value of the adjacents will be span automatically (auto row-span) 
+- rowSpanAnalyser : analyses the rows and insert item into cell style: row-span: n (n>0 n-row-span ; n=0 undefined ; 1:one-row-default ;n=-1 skip)
 
 tableJson:
-	records: 
+	table: 
 	    [
 		[ {text, "2024-05", style}, {text, "Report", style}, {img, url, style} ],
 		[ {text, "description", style} ],
