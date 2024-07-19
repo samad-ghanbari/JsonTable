@@ -2,7 +2,6 @@
 #include <QFile>
 #include <QByteArray>
 #include <QJsonParseError>
-#include <QDebug>
 
 JsonTable::JsonTable(double _default_width, double _default_height, QString _default_background_color, QString _default_color, double _default_font_size, QString _default_font_family, QObject *parent )
     : QObject{parent}
@@ -37,9 +36,35 @@ QJsonObject JsonTable::createObject(QString _type, QString _value, QJsonObject _
     return obj;
 }
 
+QJsonArray JsonTable::createObjects(QString _type, QStringList _values, QJsonObject _style)
+{
+    QJsonArray array;
+    QJsonObject obj;
+    for(int i=0 ; i < _values.size() ; i++  )
+    {
+        obj["type"] = _type;
+        obj["value"] = _values[i];
+        obj["style"] = _style;
+
+        array.append(obj);
+    }
+
+    return array;
+}
+
 QJsonArray JsonTable::addObjectToRow(QJsonArray &row, QJsonObject item)
 {
     row.append(item);
+    return row;
+}
+
+QJsonArray JsonTable::addArrayToRow(QJsonArray &row, QJsonArray array)
+{
+    for(int i=0; i<array.count(); i++)
+    {
+        row.append(array[i].toObject());
+    }
+
     return row;
 }
 
@@ -208,6 +233,8 @@ bool JsonTable::setObjectRowSpan(int row, int index, int rowSpan)
     QJsonObject style = obj["style"].toObject();
     style["row-span"] = rowSpan;
     obj["style"] = style;
+    array.removeAt(index);
+    array.insert(index, obj);
     table.removeAt(row);
     table.insert(row,array);
 
@@ -222,6 +249,11 @@ bool JsonTable::objectAnalyser(int row, int index)
     QString baseValue = this->getValue(row, index);
     int baseSpan = this->getObjectRowSpan(row, index);
     if(baseSpan != 0) return res;
+
+    if(row == (table.count()-1)) // last row
+    {
+        res = res && setObjectRowSpan(row, index, span);
+    }
 
     QString tempValue;
     for(int r=row+1; r<table.count(); r++)

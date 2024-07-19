@@ -1,11 +1,28 @@
-//written by Samad Ghanbari
+//@ written by Samad Ghanbari
+// 1403-04-29
 // row-object: { type, value, style }               	QJsonObject
 // row: [ row-object-1 , row-object-2, row-object-3 ]	QJsonArray
 // table: [ row-1, row-2 , ... ]                        QJsonArray
+
+/*
+style: { width; height; background-color; color; font-size; font-family; }
+
+row-item: { type, value, style }                QJsonObject
+row: [ row-item-1 , row-item-2, row-item-3 ]	QJsonArray
+table: [ row-1, row-2 , ... ]                   QJsonArray
+
+- Maximum height of a row-items will be considered as the row height
+- Same value of the adjacents will be span automatically (auto row-span)
+- rowSpanAnalyser : analyses the rows and insert item into cell style: row-span: n (n>0 n-row-span ; n=0 undefined ; 1:one-row-default ;n=-1 skip)
+
+*/
+
 #ifndef JSONTABLE_H
 #define JSONTABLE_H
 
 #include <QObject>
+#include <QStringList>
+
 // json
 #include <QJsonObject>
 #include <QJsonValue>
@@ -19,7 +36,9 @@ public:
     explicit JsonTable(double _default_width, double _default_height, QString _default_background_color, QString _default_color, double _default_font_size, QString _default_font_family, QObject *parent = nullptr );
     QJsonObject createStyle(double _width=0, double _height=0, QString _backgroundColor=NULL, QString _color=NULL, double _fontSize=0, QString _fontFamily=NULL, int rowSpan=0);
     QJsonObject createObject(QString _type, QString _value, QJsonObject _style);
+    QJsonArray createObjects(QString _type, QStringList  _values, QJsonObject _style);
     QJsonArray addObjectToRow(QJsonArray &row, QJsonObject item);
+    QJsonArray addArrayToRow(QJsonArray &row, QJsonArray array);
     void addRowToTable(QJsonArray &row);
     QJsonArray emptyJsonArray(QJsonArray &array);
     QByteArray toByteArray();
