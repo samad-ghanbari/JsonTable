@@ -14,6 +14,7 @@ table: [ row-1, row-2 , ... ]                   QJsonArray
 - Maximum height of a row-items will be considered as the row height
 - Same value of the adjacents will be span automatically (auto row-span)
 - rowSpanAnalyser : analyses the rows and insert item into cell style: row-span: n (n>0 n-row-span ; n=0 undefined ; 1:one-row-default ;n=-1 skip)
+- empty array-row means new page
 
 */
 
@@ -40,6 +41,7 @@ public:
     QJsonArray addObjectToRow(QJsonArray &row, QJsonObject item);
     QJsonArray addArrayToRow(QJsonArray &row, QJsonArray array);
     void addRowToTable(QJsonArray &row);
+    void addRowToTable(); //add empty Row
     QJsonArray emptyJsonArray(QJsonArray &array);
     QByteArray toByteArray();
     QByteArray toByteArray(QJsonObject obj);

@@ -73,6 +73,13 @@ void JsonTable::addRowToTable(QJsonArray &row)
     table.append(row);
 }
 
+void JsonTable::addRowToTable()
+{
+    // add empty row
+    QJsonArray row;
+    table.append(row);
+}
+
 QJsonArray JsonTable::emptyJsonArray(QJsonArray &array)
 {
     while(array.count() > 0)

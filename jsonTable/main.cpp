@@ -132,11 +132,14 @@ int main(int argc, char *argv[])
     jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
+    //new page with empty array-row
+    jtable.addRowToTable();
+
 
     style = jtable.createStyle(40, 30);
-    item = jtable.createObject("text", "item0", style);
-    jtable.addObjectToRow(row, item);
-    items = jtable.createObjects("text", {"item1", "item2"} , style);
+    item = jtable.createObject("text", "item1", style);
+    row = jtable.addObjectToRow(row, item);
+    items = jtable.createObjects("text", {"item2", "item30"} , style);
     row = jtable.addArrayToRow(row, items);
     jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
