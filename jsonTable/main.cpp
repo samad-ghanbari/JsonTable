@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
-    style = jtable.createStyle(30, 20,"#f00", "#efe", 16,false, "Times" );
+    style = jtable.createStyle(30, 20,"#f00", "#efe", 16,false, false, "Times" );
     items = jtable.createObjects("text", {"item1", "item2", "item30", "item40", "item50"} , style);
     row = jtable.addArrayToRow(row, items);
     jtable.addRowToTable(row);
