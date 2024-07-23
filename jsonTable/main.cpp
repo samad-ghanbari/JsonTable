@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    JsonTable jtable(20,20,"#eee", "#000", 14, "Tahoma");
+    JsonTable jtable(20,20,"#000", "#fff","Tahoma", 18);
     QJsonObject style, item;
     QJsonArray row;
 
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
-    style = jtable.createStyle(30, 20,"#f00", "#efe", 16,false, "right", "Times" );
+    style = jtable.createStyle(30, 20,"#f00", "#efe","Times", 18,true,"left",0 );
     items = jtable.createObjects("text", {"item1", "item2", "item30", "item40", "item50"} , style);
     row = jtable.addArrayToRow(row, items);
     jtable.addRowToTable(row);
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
 
     jtable.updateTableRowHeight();
-    jtable.tableAnalyser();
+    jtable.updateTableRowSpan();
 
 
     stream << jtable.toByteArray() << endl; // Qt::endl;
