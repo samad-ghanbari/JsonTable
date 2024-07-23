@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    JsonTable jtable(20,20,"#000", "#fff","Tahoma", 18);
+    JsonTable jtable(20,"#000", "#fff","Tahoma", 18);
     QJsonObject style, item;
     QJsonArray row;
 
@@ -120,39 +120,49 @@ int main(int argc, char *argv[])
 
     //row-0-0
     QJsonArray items;
-    style = jtable.createStyle(20, 10);
-    items = jtable.createObjects("text", {"item1", "item2", "item3", "item4", "item5"} , style);
-    row = jtable.addArrayToRow(row, items);
-    jtable.addRowToTable(row);
+//    style = jtable.createStyle(0, 10);
+//    items = jtable.createObjects("text", {"item1", "item2", "item3", "item4", "item5"} , style);
+//    row = jtable.addArrayToRow(row, items);
+//    jtable.addRowToTable(row);
+//    row = jtable.emptyJsonArray(row);
+
+//    style = jtable.createStyle(30, 20);
+//    items = jtable.createObjects("text", {"item1", "item2", "item30", "item40", "item50"} , style);
+//    row = jtable.addArrayToRow(row, items);
+//    jtable.addRowToTable(row);
+//    row = jtable.emptyJsonArray(row);
+
+//    //new page with empty array-row
+//    jtable.addRowToTable();
+
+
+//    style = jtable.createStyle(0, 30);
+//    item = jtable.createObject("text", "item1", style);
+//    row = jtable.addObjectToRow(row, item);
+//    items = jtable.createObjects("text", {"item2", "item30"} , style);
+//    row = jtable.addArrayToRow(row, items);
+//    jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
-    style = jtable.createStyle(30, 20);
-    items = jtable.createObjects("text", {"item1", "item2", "item30", "item40", "item50"} , style);
-    row = jtable.addArrayToRow(row, items);
-    jtable.addRowToTable(row);
-    row = jtable.emptyJsonArray(row);
+    style = jtable.createStyle(0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-1" , style);
+    jtable.addObjectToRow(row, item);
 
-    //new page with empty array-row
-    jtable.addRowToTable();
+    style = jtable.createStyle(0, 22,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-2" , style);
+    jtable.addObjectToRow(row, item);
 
+    style = jtable.createStyle(100, 22,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-3" , style);
+    jtable.addObjectToRow(row, item);
 
-    style = jtable.createStyle(40, 30);
-    item = jtable.createObject("text", "item1", style);
-    row = jtable.addObjectToRow(row, item);
-    items = jtable.createObjects("text", {"item2", "item30"} , style);
-    row = jtable.addArrayToRow(row, items);
-    jtable.addRowToTable(row);
-    row = jtable.emptyJsonArray(row);
-
-    style = jtable.createStyle(30, 20,"#f00", "#efe","Times", 18,true,"left",0 );
-    items = jtable.createObjects("text", {"item1", "item2", "item30", "item40", "item50"} , style);
-    row = jtable.addArrayToRow(row, items);
     jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
 
     jtable.updateTableRowHeight();
     jtable.updateTableRowSpan();
+    jtable.updateTableWidth(500);
 
 
     stream << jtable.toByteArray() << endl; // Qt::endl;
