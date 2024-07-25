@@ -167,5 +167,5 @@ int main(int argc, char *argv[])
 
     stream << jtable.toByteArray() << endl; // Qt::endl;
 
-    return a.exec();
+    return 1;
 }
