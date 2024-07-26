@@ -144,15 +144,15 @@ int main(int argc, char *argv[])
 //    jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
-    style = jtable.createStyle(0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
+    style = jtable.createStyle("DSLAM",0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
     item = jtable.createObject("text", "item-1" , style);
     jtable.addObjectToRow(row, item);
 
-    style = jtable.createStyle(0, 22,"#f00", "#efe","Times", 18,true,"left",0 );
+    style = jtable.createStyle("DSLAM", 0, 22,"#f00", "#efe","Times", 18,true,"left",0 );
     item = jtable.createObject("text", "item-2" , style);
     jtable.addObjectToRow(row, item);
 
-    style = jtable.createStyle(100, 22,"#f00", "#efe","Times", 18,true,"left",0 );
+    style = jtable.createStyle("METRO", 100, 22,"#f00", "#efe","Times", 18,true,"left",0 );
     item = jtable.createObject("text", "item-3" , style);
     jtable.addObjectToRow(row, item);
 
