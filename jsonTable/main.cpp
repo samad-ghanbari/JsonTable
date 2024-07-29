@@ -1,12 +1,13 @@
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDebug>
 #include <QTextStream>
-
+#include <QFont>
+#include <QFontMetrics>
 #include "jsontable.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    QGuiApplication a(argc, argv);
     JsonTable jtable(20,"#000", "#fff","Tahoma", 18);
     QJsonObject style, item;
     QJsonArray row;
@@ -163,15 +164,15 @@ int main(int argc, char *argv[])
     row = jtable.emptyJsonArray(row);
 
     style = jtable.createStyle("DSLAM",0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-1" , style);
+    item = jtable.createObject("text", "item-1 test" , style);
     jtable.addObjectToRow(row, item);
 
     style = jtable.createStyle("DSLAM", 0, 22,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-2" , style);
+    item = jtable.createObject("text", "item-2 this is another text" , style);
     jtable.addObjectToRow(row, item);
 
     style = jtable.createStyle("METRO", 100, 22,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-3" , style);
+    item = jtable.createObject("text", "item-3 again another object" , style);
     jtable.addObjectToRow(row, item);
 
     jtable.addRowToTable(row);
@@ -181,11 +182,22 @@ int main(int argc, char *argv[])
 
     jtable.updateTableRowHeight();
     jtable.updateTableRowSpan();
-    jtable.updateTableWidth(500);
+    jtable.updateColumnsWidth(500);
 
 
-    stream << jtable.toByteArray() << endl; // Qt::endl;
+    stream << jtable.toByteArray() <<  Qt::endl; //endl; //
 
-    qDebug() << jtable.getHeight(0,3);
+    //qDebug() << jtable.getHeight(0,3);
+
+
+//    QFont font("tahoma", 12); // works on gui application
+//    font.setBold(false);
+//    QFontMetrics fm(font);
+//    QString value = "i";
+//    //double width = fm.boundingRect(value).width(); //fm.width("Hello"); 183
+//    double width = fm.horizontalAdvance(value); // 188
+//    qDebug() << "string width is : " << width;
+
+
     return 1;
 }

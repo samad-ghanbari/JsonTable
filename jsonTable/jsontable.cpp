@@ -2,6 +2,8 @@
 #include <QFile>
 #include <QByteArray>
 #include <QJsonParseError>
+#include <QFontMetrics> // gui config
+#include <QPixmap>
 
 JsonTable::JsonTable(double _default_height, QString _default_background_color, QString _default_color, QString _default_font_family, double _default_font_size, QObject *parent )
     : QObject{parent}
@@ -19,6 +21,7 @@ QJsonObject JsonTable::createStyle(QString _name, double _width, double _height,
     obj["name"] = _name;
     obj["width"] = (_width < 0)? 0 : _width;
     obj["height"] = (_height == 0)? default_height : _height;
+    obj["occupy"] = -1;
     obj["background-color"] = (_backgroundColor.isNull())? default_background_color : _backgroundColor ;
     obj["color"] = (_color.isNull())? default_color : _color;
     obj["font-size"]= (_fontSize == 0)? default_font_size : _fontSize;
@@ -36,6 +39,9 @@ QJsonObject JsonTable::createObject(QString _type, QString _value, QJsonObject _
     obj["type"] = _type;
     obj["value"] = _value;
     obj["style"] = _style;
+    // update occupy
+    obj = updateObjectOccupy(obj);
+
     return obj;
 }
 
@@ -48,6 +54,8 @@ QJsonArray JsonTable::createObjects(QString _type, QStringList _values, QJsonObj
         obj["type"] = _type;
         obj["value"] = _values[i];
         obj["style"] = _style;
+        // update occupy
+        obj = updateObjectOccupy(obj);
 
         array.append(obj);
     }
@@ -211,6 +219,19 @@ void JsonTable::updateTableRowHeight()
     }
 }
 
+void JsonTable::updateObjectHeight(int row, int column, double height)
+{
+    QJsonArray Row = table[row].toArray();
+    QJsonObject obj = Row[column].toObject();
+    obj = updateObjectStyle(obj, "height", height);
+
+    Row.removeAt(column);
+    Row.insert(column, obj);
+
+    table.removeAt(row);
+    table.insert(row, Row);
+}
+
 double JsonTable::getHeight(int startRow, int endRow)
 {
     double height=0;
@@ -358,7 +379,7 @@ bool JsonTable::updateTableRowSpan(int ColumnIndex)
     return res;
 }
 
-void JsonTable::updateTableWidth(double viewPortWidth)
+void JsonTable::updateColumnsWidth(double viewPortWidth)
 {
     QJsonArray row;
     QJsonObject obj;
@@ -400,6 +421,107 @@ void JsonTable::updateTableWidth(double viewPortWidth)
     }
 }
 
+void JsonTable::updateTableFineOccupation(double viewPortWidth)
+{
+    // checks width and height
+    // * given width and hight    : no change
+    // * given width and height=0 : hight calculation - for wrap
+    // * width=0 and given hight  : width = max possible occupy
+    // * width=0 and hight=0      : fine width then hight calculation
+
+    QJsonArray Row;
+    QJsonObject Obj;
+    QMap<QString, double> whc; // width-height-occupy
+    double usedWidth, width, height, occupy, fontSize;
+    int counter;
+
+    for(int r=0; r < table.count(); r++)
+    {
+        Row = table[r].toArray();
+        usedWidth = 0;
+        for(int c=0; Row.count(); c++)
+        {
+            Obj = Row[c].toObject();
+            whc = getWidthHeightOccupy(Obj);
+            fontSize = Obj["style"].toObject()["font-size"].toDouble();
+
+             // * given width and hight
+            if( (whc.value("width") > 0 ) && (whc.value("height") > 0) )
+            {
+                width = whc.value("width");
+                columnWidth[c] =width;
+                usedWidth += width;
+                continue;
+            }
+            // * given width and height=0 - TWO times wrap allowed
+            if( (whc.value("width") > 0 ) && (whc.value("height") == 0) )
+            {
+                width = whc.value("width");
+                occupy = whc.value("occupy");
+                columnWidth[c] =width;
+                usedWidth += width;
+
+                if(width < occupy)
+                {
+                    counter = 0;
+                    if(width < (occupy/2) )
+                        counter++;
+                    if(width < (occupy/4) )
+                        counter++;
+
+                    height = fontSize + counter * fontSize;
+                }
+                else height = fontSize;
+
+                updateObjectHeight(r,c, height);
+                continue;
+            }
+            // * width=0 and given hight
+            if( (whc.value("width") == 0 ) && (whc.value("height") > 0) )
+            {
+            }
+            // * width=0 and hight=0
+            if( (whc.value("width") == 0 ) && (whc.value("height") == 0) )
+            {
+            }
+        }
+    }
+}
+
+QMap<QString, double> JsonTable::getWidthHeightOccupy(QJsonObject obj)
+{
+    QJsonObject style = obj["style"].toObject();
+    double width = style["width"].toDouble();
+    double height = style["height"].toDouble();
+    double occupy = style["occupy"].toDouble();
+
+    QMap<QString, double> map;
+    map["width"] = width;
+    map["height"] = height;
+    map["occupy"] = occupy;
+
+    return map;
+}
+
+double JsonTable::getTableMaxOccupy(int column)
+{
+    double occupy = 0, temp;
+    QJsonArray Row;
+    QJsonObject obj;
+    for(int r=0; r<table.count(); r++)
+    {
+        Row = table[r].toArray();
+        obj = Row[column].toObject();
+
+        temp = obj["style"].toObject()["occupy"].toDouble();
+
+        if(temp > occupy)
+            occupy = temp;
+    }
+
+    return occupy;
+}
+
 void JsonTable::updateRowWidth(int row, double width)
 {
     QJsonArray Row = table[row].toArray();
@@ -433,6 +555,76 @@ void JsonTable::updateRowWidth(int row, QList<int> index, double width)
 
     table.removeAt(row);
     table.insert(row, Row);
+}
+
+double JsonTable::calculateObjectOccupy(QJsonObject &obj)
+{
+    QString fontFamily = obj["style"].toObject()["font-family"].toString();
+    int fontSize = obj["style"].toObject()["font-size"].toInt();
+    double width = obj["style"].toObject()["width"].toDouble();
+    bool bold = obj["style"].toObject()["bold"].toBool();
+
+    QString value = obj["value"].toString();
+    QString type =  obj["type"].toString();
+    if(type.compare("img", Qt::CaseInsensitive) == 0)
+    {
+        if(width > 0)
+            return width;
+        else
+        {
+            // find image width
+            QPixmap img(value);
+            width = img.size().width();
+            return width;
+        }
+    }
+
+    //text-value object
+    QFont font(fontFamily, fontSize);
+    //font.setPointSize(fontSize);
+    font.setBold(bold);
+    QFontMetrics fm(font);
+    width = fm.horizontalAdvance(value);
+    return width;
+}
+
+void JsonTable::updateObjectOccupy(int row, int column)
+{
+    QJsonArray Row = table[row].toArray();
+    QJsonObject obj = Row[column].toObject();
+
+    obj = updateObjectOccupy(obj);
+
+    Row.removeAt(column);
+    Row.insert(column, obj);
+
+    table.removeAt(row);
+    table.insert(row, Row);
+}
+
+QJsonObject JsonTable::updateObjectOccupy(QJsonObject obj)
+{
+    double occupy = calculateObjectOccupy(obj);
+    QJsonObject style = obj["style"].toObject();
+    QString value = obj["value"].toString();
+    QString type = obj["type"].toString();
+
+    if(type.compare("text", Qt::CaseInsensitive) == 0)
+    {
+        // check occupy validation
+        int len = value.length();
+        // consider minimum pixel count to reprtesent character
+        int min = 2;
+        double temp = len * min;
+        if(occupy < temp)
+            occupy = temp;
+    }
+
+    style["occupy"] = occupy;
+    obj.remove("style");
+    obj["style"] = style;
+
+    return obj;
 }
 
 
