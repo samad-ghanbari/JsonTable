@@ -31,7 +31,7 @@ occupy : automatically calculate width needed for String of object
 
 #include <QObject>
 #include <QStringList>
-
+#include <QMap>
 // json
 #include <QJsonObject>
 #include <QJsonValue>
@@ -63,6 +63,7 @@ public:
     QJsonArray updateRowStyle(QJsonArray row, QString key, double val);
     void updateTableRowHeight(); // set maximum cell height to all row-objects height
     void updateObjectHeight(int row, int column , double height);
+    void updateObjectWidth(int row, int column , double width);
     double getHeight(int startRow, int endRow);
 
     QJsonObject getRowObject(int row, int index);
@@ -76,20 +77,22 @@ public:
     bool updateTableRowSpan(bool SPAN = true); // when it is true it will span row everywhere; when it is false no row-spaning perfoms
     bool updateTableRowSpan(int ColumnIndex); // perfom row-spaning on specified column
     void updateColumnsWidth(double viewPortWidth);// set equal width for 0-width columns
-    void updateTableFineOccupation(double viewPortWidth);
+    void updateTableFairOccupation(double viewPortWidth);
     QMap<QString, double> getWidthHeightOccupy(QJsonObject obj);
     double getTableMaxOccupy(int column);// when there is table with same columns
     void updateRowWidth(int row, double width); // set same width to all objects
     void updateRowWidth(int row, QList<int> index, double width); // set same streach width to specific objects
 
-    double calculateObjectOccupy(QJsonObject &obj); // calculate text width depend on font-familt and font-size
+    void calculateColumnWidth(); // fill maxColumnOccupy MAP and columnWidth MAP columnIndex=>occupy
+    void calculateFairColumnWidth(double viewPortWidth); // fill columnWidth MAP fairly
+    double calculateObjectOccupy(QJsonObject &obj, bool onlyWidth0=true); // calculate text width depend on font-familt and font-size
     void updateObjectOccupy(int row, int column);
     QJsonObject updateObjectOccupy(QJsonObject obj);
 
     QJsonArray table; // [ [ {}, {}, {}, ... ], [], [], [] ]
     QString default_background_color, default_color, default_font_family;
     double default_height, default_font_size;
-    QMap<int, double> columnWidth;
+    QMap<int, double> maxColumnOccupy, columnWidth;
 
 };
 

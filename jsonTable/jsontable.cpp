@@ -232,6 +232,19 @@ void JsonTable::updateObjectHeight(int row, int column, double height)
     table.insert(row, Row);
 }
 
+void JsonTable::updateObjectWidth(int row, int column, double width)
+{
+    QJsonArray Row = table[row].toArray();
+    QJsonObject obj = Row[column].toObject();
+    obj = updateObjectStyle(obj, "width", width);
+
+    Row.removeAt(column);
+    Row.insert(column, obj);
+
+    table.removeAt(row);
+    table.insert(row, Row);
+}
+
 double JsonTable::getHeight(int startRow, int endRow)
 {
     double height=0;
@@ -421,7 +434,7 @@ void JsonTable::updateColumnsWidth(double viewPortWidth)
     }
 }
 
-void JsonTable::updateTableFineOccupation(double viewPortWidth)
+void JsonTable::updateTableFairOccupation(double viewPortWidth)
 {
     // checks width and height
     // * given width and hight    : no change
@@ -431,42 +444,39 @@ void JsonTable::updateTableFineOccupation(double viewPortWidth)
 
     QJsonArray Row;
     QJsonObject Obj;
-    QMap<QString, double> whc; // width-height-occupy
-    double usedWidth, width, height, occupy, fontSize;
+    QMap<QString, double> who; // width-height-occupy
+    double width, height, occupy, fontSize;
     int counter;
+
+    calculateColumnWidth();
+    updateColumnsWidth(viewPortWidth);
 
     for(int r=0; r < table.count(); r++)
     {
         Row = table[r].toArray();
-        usedWidth = 0;
         for(int c=0; Row.count(); c++)
         {
             Obj = Row[c].toObject();
-            whc = getWidthHeightOccupy(Obj);
+            who = getWidthHeightOccupy(Obj);
             fontSize = Obj["style"].toObject()["font-size"].toDouble();
 
              // * given width and hight
-            if( (whc.value("width") > 0 ) && (whc.value("height") > 0) )
+            if( (who.value("width") > 0 ) && (who.value("height") > 0) )
             {
-                width = whc.value("width");
-                columnWidth[c] =width;
-                usedWidth += width;
                 continue;
             }
             // * given width and height=0 - TWO times wrap allowed
-            if( (whc.value("width") > 0 ) && (whc.value("height") == 0) )
+            if( (who.value("width") > 0 ) && (who.value("height") == 0) )
             {
-                width = whc.value("width");
-                occupy = whc.value("occupy");
-                columnWidth[c] =width;
-                usedWidth += width;
+                width = who.value("width");
+                occupy = who.value("occupy");
 
                 if(width < occupy)
                 {
-                    counter = 0;
-                    if(width < (occupy/2) )
+                    counter = 1;
+                    if(width <= (occupy/2) )
                         counter++;
-                    if(width < (occupy/4) )
+                    if(width <= (occupy/4) )
                         counter++;
 
                     height = fontSize + counter * fontSize;
@@ -477,12 +487,44 @@ void JsonTable::updateTableFineOccupation(double viewPortWidth)
                 continue;
             }
             // * width=0 and given hight
-            if( (whc.value("width") == 0 ) && (whc.value("height") > 0) )
+            if( (who.value("width") == 0 ) && (who.value("height") > 0) )
             {
+                if(columnWidth.contains(c))
+                    width = columnWidth[c];
+                else
+                {
+                    occupy = who.value("occupy");
+                    if(occupy <= 200)
+                        width = occupy;
+                    else
+                        width = 200;
+                }
+
+                updateObjectWidth(r, c, width);
             }
             // * width=0 and hight=0
-            if( (whc.value("width") == 0 ) && (whc.value("height") == 0) )
+            if( (who.value("width") == 0 ) && (who.value("height") == 0) )
             {
+                width = 200;
+                if(columnWidth.contains(c))
+                    width = columnWidth.value(c);
+
+                occupy = who.value("occupy");
+
+                if(width < occupy)
+                {
+                    counter = 1;
+                    if(width <= (occupy/2) )
+                        counter++;
+                    if(width <= (occupy/4) )
+                        counter++;
+
+                    height = fontSize + counter * fontSize;
+                }
+                else height = fontSize;
+
+                updateObjectHeight(r, c, height);
+                updateObjectWidth(r, c, width);
             }
         }
     }
@@ -557,12 +599,140 @@ void JsonTable::updateRowWidth(int row, QList<int> index, double width)
     table.insert(row, Row);
 }
 
-double JsonTable::calculateObjectOccupy(QJsonObject &obj)
+void JsonTable::calculateColumnWidth()
+{
+    QJsonArray Row;
+    QJsonObject Obj;
+    maxColumnOccupy.clear(); // max occupy for columns
+    columnWidth.clear(); // given width columns
+    double occupy, width;
+
+    for(int r=0; r < table.count(); r++)
+    {
+        Row = table[r].toArray();
+        for(int c=0; c < Row.count(); c++)
+        {
+            Obj = Row[c].toObject();
+            width = Obj["style"].toObject()["width"].toDouble();
+            if(width > 0)
+            {
+                columnWidth[c] = width;
+                continue;
+            }
+            occupy = calculateObjectOccupy(Obj);
+            if(maxColumnOccupy.contains(c))
+            {
+                if(maxColumnOccupy.value(c) < occupy)
+                    maxColumnOccupy[c] = occupy;
+            }
+            else
+                maxColumnOccupy[c] = occupy;
+        }
+    }
+}
+
+void JsonTable::calculateFairColumnWidth(double viewPortWidth)
+{
+    double totalOccupy = 0, totalGivenWidth = 0, total;
+
+    foreach (int key, columnWidth.keys())
+    {
+        totalGivenWidth += columnWidth.value(key); // fixed width
+    }
+
+    foreach (int key, maxColumnOccupy.keys())
+    {
+        totalOccupy += maxColumnOccupy.value(key); // based on calculation
+    }
+
+    total = totalOccupy + totalGivenWidth;
+
+    if(total == viewPortWidth)
+    {
+        foreach (int key, maxColumnOccupy.keys())
+        {
+            columnWidth[key] = maxColumnOccupy.value(key);
+        }
+    }
+    else if(total < viewPortWidth)
+    {
+        //weight column width to fill the page
+        double diff = viewPortWidth - total;
+        int count = maxColumnOccupy.size();
+        double increment = diff/count;
+        foreach (int key, maxColumnOccupy.keys())
+        {
+            columnWidth[key] = maxColumnOccupy.value(key) + increment;
+        }
+    }
+    else
+    {
+        // total > viewPort
+        // fairly shirinking column
+        // 1- find mean of occupy
+        // 2- find difference
+        // 3- select columns with big variations
+        // 4- decrease selected column to fit the page
+        double diff = total - viewPortWidth;
+        QMap<int, double> diffOccupy;
+        int count = maxColumnOccupy.size();
+        double dev;
+        double meanOccupy = totalOccupy / count;
+        // positive deviations are selected
+        double sum = 0;
+        foreach (int key, maxColumnOccupy.keys())
+        {
+            dev = maxColumnOccupy.value(key) - meanOccupy;
+            if(dev >= 0)
+            {
+                diffOccupy[key] = dev;
+                sum += dev;
+            }
+        }
+
+        if(diff <= sum)
+        {
+            double val = 0;
+            foreach (int key, maxColumnOccupy.keys())
+            {
+                val = diffOccupy.value(key) * diff / sum;
+                columnWidth[key] = val;
+            }
+        }
+        else
+        {
+            sum = 0;
+            foreach (int key, maxColumnOccupy.keys())
+            {
+                if(maxColumnOccupy.value(key) > meanOccupy)
+                {
+                    maxColumnOccupy[key] = meanOccupy;
+                    sum += meanOccupy;
+                }
+                else
+                    sum += maxColumnOccupy[key];
+            }
+
+            double val = 0;
+            foreach (int key, maxColumnOccupy.keys())
+            {
+                val = maxColumnOccupy.value(key) * diff / sum;
+                columnWidth[key] = val;
+            }
+        }
+
+    }
+}
+
+double JsonTable::calculateObjectOccupy(QJsonObject &obj, bool onlyWidth0)
 {
     QString fontFamily = obj["style"].toObject()["font-family"].toString();
     int fontSize = obj["style"].toObject()["font-size"].toInt();
     double width = obj["style"].toObject()["width"].toDouble();
     bool bold = obj["style"].toObject()["bold"].toBool();
+
+    if(onlyWidth0 && (width > 0) )
+        return width;
 
     QString value = obj["value"].toString();
     QString type =  obj["type"].toString();
