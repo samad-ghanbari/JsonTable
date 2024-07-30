@@ -179,13 +179,13 @@ int main(int argc, char *argv[])
     row = jtable.emptyJsonArray(row);
 
 
-    jtable.updateTableFairOccupation(1500);
-    jtable.updateTableRowHeight();
-    jtable.updateTableRowSpan();
-    //jtable.updateColumnsWidth(500);
+    jtable.updateFairCell(400);
+    jtable.updateHeight();
+    jtable.updateRowSpan();
+    //jtable.updateColumnsWidth(1500);
 
 
-    stream << jtable.toByteArray() <<  endl; //Qt::endl; //
+    stream << jtable.toByteArray() <<  Qt::endl; //Qt::endl; //
 
     //qDebug() << jtable.getHeight(0,3);
 

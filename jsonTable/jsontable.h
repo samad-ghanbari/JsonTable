@@ -58,41 +58,53 @@ public:
     bool saveJsonAs(QString fileName);
     bool loadJson(QString fileName);
 
-    float getRowMaxHeight(QJsonArray array);
-    QJsonObject updateObjectStyle(QJsonObject _object, QString _key, double _val);
-    QJsonArray updateRowStyle(QJsonArray row, QString key, double val);
-    void updateTableRowHeight(); // set maximum cell height to all row-objects height
-    void updateObjectHeight(int row, int column , double height);
-    void updateObjectWidth(int row, int column , double width);
+    //get
+    QJsonObject getObject(int row, int column);
+    QString getType(int row, int column);
+    QString getValue(int row, int column);
+    QJsonObject getStyle(int row, int column);
+    int getRowSpan(int row, int column);
+    float getRowMaxHeight(QJsonArray Row);
     double getHeight(int startRow, int endRow);
+    QMap<QString, double> getWHO(QJsonObject obj); // get width-height-occupy
+    double getMaxOccupy(int column);
 
-    QJsonObject getRowObject(int row, int index);
-    QString getType(int row, int index);
-    QString getValue(int row, int index);
-    QJsonObject getStyle(int row, int index);
-    int getObjectRowSpan(int row, int index);
-    bool setObjectRowSpan(int row, int index, int rowSpan);
-    bool updateObjectRowSpan(int row, int index, bool SPAN=true);
-    bool updateArrayRowSpan(int row, bool SPAN=true);
-    bool updateTableRowSpan(bool SPAN = true); // when it is true it will span row everywhere; when it is false no row-spaning perfoms
-    bool updateTableRowSpan(int ColumnIndex); // perfom row-spaning on specified column
-    void updateColumnsWidth(double viewPortWidth);// set equal width for 0-width columns
-    void updateTableFairOccupation(double viewPortWidth);
-    QMap<QString, double> getWidthHeightOccupy(QJsonObject obj);
-    double getTableMaxOccupy(int column);// when there is table with same columns
-    void updateRowWidth(int row, double width); // set same width to all objects
-    void updateRowWidth(int row, QList<int> index, double width); // set same streach width to specific objects
+    //update style
+    QJsonObject updateStyle(QJsonObject _object, QString _key, double _val);
+    QJsonArray  updateStyle(QJsonArray row, QString key, double val);
 
-    void calculateColumnWidth(); // fill maxColumnOccupy MAP and columnWidth MAP columnIndex=>occupy
-    void calculateFairColumnWidth(double viewPortWidth); // fill columnWidth MAP fairly
-    double calculateObjectOccupy(QJsonObject &obj, bool onlyWidth0=true); // calculate text width depend on font-familt and font-size
-    void updateObjectOccupy(int row, int column);
-    QJsonObject updateObjectOccupy(QJsonObject obj);
+    //update height
+    void updateHeight(); // set maximum cell height to all row-objects height
+    void updateHeight(int row, int column , double height);
+
+    //update width
+    void updateWidth(int row, int column , double width);
+    void updateWidth(int row, double width); // set same width to all objects
+    void updateWidth(int row, QList<int> index, double width); // set same streach width to specific objects
+    void updateSameWidth(double viewPortWidth); // set equal width for 0-width columns
+
+    //update row-span
+    bool updateRowSpan(int row, int column, int rowSpan);
+    bool updateRowSpan(int row, int column, bool SPAN=true); // update row-span set 1 or -1
+    bool updateRowSpan(int row, bool SPAN=true);
+    bool updateRowSpan(bool SPAN = true); // when it is true it will span row everywhere; when it is false no row-spaning perfoms
+    bool updateRowSpan(int ColumnIndex); // perfom row-spaning on specified column
+
+    //occupy
+    double calculateOccupy(QJsonObject &obj); // calculate text width depend on font-familt and font-size
+    void updateOccupy(int row, int column);
+    QJsonObject updateOccupy(QJsonObject obj);
+
+    // update Cell
+    void updateFairCell(double viewPortWidth); // set fair width for 0-width columns and suitable height for rows to wrap
+    void resetColumnMap(); // fill maxColumnOccupy MAP and columnWidth MAP columnIndex=>occupy
+    void calculateColumnMap(double viewPortWidth); // fill columnWidth MAP fairly
+
 
     QJsonArray table; // [ [ {}, {}, {}, ... ], [], [], [] ]
     QString default_background_color, default_color, default_font_family;
     double default_height, default_font_size;
-    QMap<int, double> maxColumnOccupy, columnWidth;
+    QMap<int, double> columnOccupy, columnWidth;
 
 };
 
