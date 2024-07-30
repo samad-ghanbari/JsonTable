@@ -145,16 +145,16 @@ int main(int argc, char *argv[])
 //    jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
-    style = jtable.createStyle("DSLAM",0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-1" , style);
+    style = jtable.createStyle("DSLAM",0, 20,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-1 fixed WH" , style);
     jtable.addObjectToRow(row, item);
 
-    style = jtable.createStyle("DSLAM", 0, 22,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-2" , style);
+    style = jtable.createStyle("DSLAM", 0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-2 fixed H" , style);
     jtable.addObjectToRow(row, item);
 
-    style = jtable.createStyle("METRO", 100, 22,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-3" , style);
+    style = jtable.createStyle("METRO", 0, 0,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-3 auto" , style);
     jtable.addObjectToRow(row, item);
 
     jtable.addRowToTable(row);
@@ -163,24 +163,24 @@ int main(int argc, char *argv[])
 
     row = jtable.emptyJsonArray(row);
 
-    style = jtable.createStyle("DSLAM",0, 21,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-1 test" , style);
+    style = jtable.createStyle("DSLAM",100, 0,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-1 auto W and H test" , style);
     jtable.addObjectToRow(row, item);
 
     style = jtable.createStyle("DSLAM", 0, 22,"#f00", "#efe","Times", 18,true,"left",0 );
     item = jtable.createObject("text", "item-2 this is another text" , style);
     jtable.addObjectToRow(row, item);
 
-    style = jtable.createStyle("METRO", 100, 22,"#f00", "#efe","Times", 18,true,"left",0 );
-    item = jtable.createObject("text", "item-3 again another object" , style);
+    style = jtable.createStyle("METRO", 100, 0,"#f00", "#efe","Times", 18,true,"left",0 );
+    item = jtable.createObject("text", "item-3 again another object. this is a long text to check word wrap. it will be two line cell" , style);
     jtable.addObjectToRow(row, item);
 
     jtable.addRowToTable(row);
     row = jtable.emptyJsonArray(row);
 
 
-    jtable.updateFairCell(400);
-    jtable.updateHeight();
+    jtable.updateFairCell(500, true);
+    //jtable.updateHeight();
     jtable.updateRowSpan();
     //jtable.updateColumnsWidth(1500);
 

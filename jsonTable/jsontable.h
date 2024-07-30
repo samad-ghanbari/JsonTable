@@ -96,9 +96,10 @@ public:
     QJsonObject updateOccupy(QJsonObject obj);
 
     // update Cell
-    void updateFairCell(double viewPortWidth); // set fair width for 0-width columns and suitable height for rows to wrap
+    void updateFairCell(double viewPortWidth, bool wrapAll = false); // set fair width for 0-width columns and suitable height for rows to wrap
     void resetColumnMap(); // fill maxColumnOccupy MAP and columnWidth MAP columnIndex=>occupy
     void calculateColumnMap(double viewPortWidth); // fill columnWidth MAP fairly
+    double calculateWrapHeight(double occupy, double width, double fontSize);
 
 
     QJsonArray table; // [ [ {}, {}, {}, ... ], [], [], [] ]
