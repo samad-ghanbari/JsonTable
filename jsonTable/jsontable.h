@@ -86,7 +86,7 @@ public:
     //update row-span
     bool updateRowSpan(int row, int column, int rowSpan);
     bool updateRowSpan(int row, int column, bool SPAN=true); // update row-span set 1 or -1
-    bool updateRowSpan(int row, bool SPAN=true);
+    bool updateRowSpan(int row, bool SPAN);
     bool updateRowSpan(bool SPAN = true); // when it is true it will span row everywhere; when it is false no row-spaning perfoms
     bool updateRowSpan(int ColumnIndex); // perfom row-spaning on specified column
 

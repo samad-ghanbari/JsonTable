@@ -180,12 +180,16 @@ int main(int argc, char *argv[])
 
 
     jtable.updateFairCell(500, true);
+    jtable.updateRowSpan(true);
+
     //jtable.updateHeight();
-    jtable.updateRowSpan();
     //jtable.updateColumnsWidth(1500);
 
-
-    stream << jtable.toByteArray() <<  Qt::endl; //Qt::endl; //
+#if QT_VERSION > 0x051210
+    stream << jtable.toByteArray() << Qt::endl;
+#else
+    stream << jtable.toByteArray() << endl;
+#endif
 
     //qDebug() << jtable.getHeight(0,3);
 

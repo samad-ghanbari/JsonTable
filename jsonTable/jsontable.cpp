@@ -4,6 +4,7 @@
 #include <QJsonParseError>
 #include <QFontMetrics> // gui config
 #include <QPixmap>
+#include <QtMath>
 
 JsonTable::JsonTable(double _default_height, QString _default_background_color, QString _default_color, QString _default_font_family, double _default_font_size, QObject *parent )
     : QObject{parent}
