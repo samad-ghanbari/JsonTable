@@ -11,6 +11,8 @@ style: {name; width; height; occupy; color; background-color; font-family;  font
 - Row objects width all 0 width:          same width objects
 - Row objects width multiple 0 width:     stretch left space width objects
 
+Alternative background color: background-color list
+
 auto vertical center align
 horizontal center by style
 row-item: { type, value, style }                QJsonObject
@@ -32,6 +34,8 @@ occupy : automatically calculate width needed for String of object
 #include <QObject>
 #include <QStringList>
 #include <QMap>
+#include <QVariant>
+
 // json
 #include <QJsonObject>
 #include <QJsonValue>
@@ -55,6 +59,7 @@ public:
     QByteArray toByteArray();
     QByteArray toByteArray(QJsonObject obj);
     QByteArray toByteArray(QJsonArray array);
+    void setAlternativeRows(QString background1="#FFF", QString background2="#FFFEFE", int startRow=1);
     bool saveJsonAs(QString fileName);
     bool loadJson(QString fileName);
 
@@ -70,7 +75,9 @@ public:
     double getMaxOccupy(int column);
 
     //update style
+    QJsonObject updateStyle(QJsonObject _object, QString _key, QString _val);
     QJsonObject updateStyle(QJsonObject _object, QString _key, double _val);
+    QJsonArray  updateStyle(QJsonArray row, QString key, QString val);
     QJsonArray  updateStyle(QJsonArray row, QString key, double val);
 
     //update height
@@ -78,7 +85,6 @@ public:
     void updateHeight(int row, int column , double height);
 
     //update width
-    void updateWidth();
     void updateWidth(int row, int column , double width);
     void updateWidth(int row, double width); // set same width to all objects
     void updateWidth(int row, QList<int> index, double width); // set same streach width to specific objects
@@ -101,7 +107,7 @@ public:
     void resetColumnMap(); // fill maxColumnOccupy MAP and columnWidth MAP columnIndex=>occupy
     void calculateColumnMap(double viewPortWidth); // fill columnWidth MAP fairly
     double calculateWrapHeight(double occupy, double width, double fontSize);
-    void updateColumnOccupy(double viewPortWidth, int upperThreshold=-1, int breakPoint=-1);
+    void updateColumnOccupy(double viewPortWidth, int upperThreshold=-1 , int breakPoint=-1);
 
     QJsonArray table; // [ [ {}, {}, {}, ... ], [], [], [] ]
     QString default_background_color, default_color, default_font_family;
