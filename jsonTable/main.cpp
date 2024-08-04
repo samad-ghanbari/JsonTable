@@ -324,8 +324,6 @@ int main(int argc, char *argv[])
     table->addRowToTable(row);
 
 
-
-
     table->updateFairCell(1517, true);
     table->updateRowSpan(true);
 
