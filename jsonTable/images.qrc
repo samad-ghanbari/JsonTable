@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>danet.png</file>
+        <file>tct.jpg</file>
+    </qresource>
+</RCC>

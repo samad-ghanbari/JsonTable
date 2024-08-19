@@ -16,4 +16,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    jsontable.h
+    jsontable.h \
+    tableTemplate.h
+
+DISTFILES +=
+
+RESOURCES += \
+    images.qrc
